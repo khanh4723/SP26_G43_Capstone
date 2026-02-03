@@ -1,0 +1,48 @@
+@page
+@model SmartJewelry.Web.Pages.Auth.ExternalLoginModel
+@{
+    ViewData["Title"] = "Đăng nhập với " + Model.Provider;
+    Layout = "_Layout";
+}
+
+<div class="auth-container">
+    <div class="auth-branding">
+        <div class="branding-content">
+            <div class="brand-logo">
+                <i class="fas fa-gem"></i>
+            </div>
+            <h1 class="brand-name">Smart Jewelry</h1>
+            <p class="brand-tagline">Trang sức & Đá quý cao cấp</p>
+        </div>
+    </div>
+
+    <div class="auth-form-panel">
+        <div class="auth-form-container">
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="auth-header">
+                    <div class="success-icon error-icon">
+                        <i class="fas fa-times"></i>
+                    </div>
+                    <h1>Đăng nhập thất bại</h1>
+                    <p>@Model.ErrorMessage</p>
+                </div>
+
+                <a href="/Auth/Login" class="btn btn-primary btn-block">
+                    <i class="fas fa-arrow-left"></i>
+                    Quay lại đăng nhập
+                </a>
+            }
+            else
+            {
+                <div class="auth-header">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">
+                        <span class="spinner" style="width: 50px; height: 50px; border-width: 3px;"></span>
+                    </div>
+                    <h1>Đang xử lý...</h1>
+                    <p>Vui lòng đợi trong giây lát</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
