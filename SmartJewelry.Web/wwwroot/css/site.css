@@ -62,8 +62,7 @@ html {
 }
 
 body {
-    font-family: var(--font-body);
-    background: var(--dark-primary);
+    font-family: var(--font-body);   
     color: var(--text-light);
     line-height: 1.6;
     min-height: 100vh;

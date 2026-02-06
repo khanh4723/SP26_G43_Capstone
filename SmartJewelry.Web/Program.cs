@@ -1,12 +1,12 @@
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+builder.Services.AddControllersWithViews();
 
 // Configure HttpClient for API calls
 builder.Services.AddHttpClient("SmartJewelryAPI", client =>
 {
-    var baseUrl = builder.Configuration["ApiSettings:BaseUrl"] ?? "http://localhost:5000";
+    var baseUrl = builder.Configuration["AppSettings:ApiBaseUrl"] ?? "http://localhost:5000";
     client.BaseAddress = new Uri(baseUrl.TrimEnd('/') + "/api/");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
     client.Timeout = TimeSpan.FromSeconds(30);
@@ -23,6 +23,7 @@ var authBuilder = builder.Services.AddAuthentication(options =>
     options.LoginPath = "/Auth/Login";
     options.LogoutPath = "/Auth/Logout";
     options.AccessDeniedPath = "/Auth/AccessDenied";
+    options.Cookie.Name = "SmartJewelry.Auth";
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
     options.SlidingExpiration = true;
 });
@@ -37,6 +38,7 @@ if (!string.IsNullOrEmpty(googleClientId) && !googleClientId.Contains("YOUR_"))
         options.ClientId = googleClientId;
         options.ClientSecret = googleClientSecret ?? "";
         options.CallbackPath = "/signin-google";
+        options.SaveTokens = true; // Save access_token to authentication properties
     });
 }
 
@@ -50,6 +52,7 @@ if (!string.IsNullOrEmpty(facebookAppId) && !facebookAppId.Contains("YOUR_"))
         options.AppId = facebookAppId;
         options.AppSecret = facebookAppSecret ?? "";
         options.CallbackPath = "/signin-facebook";
+        options.SaveTokens = true; // Save access_token to authentication properties
     });
 }
 
@@ -74,11 +77,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseSession();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseSession();
-
-app.MapRazorPages();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

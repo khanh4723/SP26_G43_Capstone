@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Smart Jewelry</title>
+    
+    @RenderSection("Styles", required: false)
+    
+    <style>
+        body {
+            background-color: #ffffff !important;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    @RenderBody()
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
