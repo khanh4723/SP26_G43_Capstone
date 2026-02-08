@@ -1,28 +1,49 @@
+﻿using System;
+using System.Collections.Generic;
+
 namespace SmartJewelry.API.Entities;
 
-public class Promotion
+public partial class Promotion
 {
     public int PromotionId { get; set; }
-    public string PromotionCode { get; set; } = string.Empty;
-    public string PromotionName { get; set; } = string.Empty;
-    public string? Description { get; set; }
-    public string DiscountType { get; set; } = string.Empty;
-    public decimal? DiscountValue { get; set; }
-    public string? ApplicableProducts { get; set; } // JSON
-    public decimal MinOrderAmount { get; set; } = 0;
-    public decimal? MaxDiscountAmount { get; set; }
-    public int UsageLimitPerCustomer { get; set; } = 1;
-    public int? TotalUsageLimit { get; set; }
-    public int CurrentUsageCount { get; set; } = 0;
-    public string? UsageHistory { get; set; } // JSON
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public int? CreatorId { get; set; }
-    public int? ManagerId { get; set; }
-    public bool IsActive { get; set; } = true;
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    // Navigation properties
+    public string PromotionCode { get; set; } = null!;
+
+    public string PromotionName { get; set; } = null!;
+
+    public string? Description { get; set; }
+
+    public string DiscountType { get; set; } = null!;
+
+    public decimal? DiscountValue { get; set; }
+
+    public string? ApplicableProducts { get; set; }
+
+    public decimal? MinOrderAmount { get; set; }
+
+    public decimal? MaxDiscountAmount { get; set; }
+
+    public int? UsageLimitPerCustomer { get; set; }
+
+    public int? TotalUsageLimit { get; set; }
+
+    public int? CurrentUsageCount { get; set; }
+
+    public string? UsageHistory { get; set; }
+
+    public DateOnly StartDate { get; set; }
+
+    public DateOnly EndDate { get; set; }
+
+    public int? CreatorId { get; set; }
+
+    public int? ManagerId { get; set; }
+
+    public bool? IsActive { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
     public virtual ContentCreator? Creator { get; set; }
+
     public virtual StoreManager? Manager { get; set; }
 }

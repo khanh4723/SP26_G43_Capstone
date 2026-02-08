@@ -1,13 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+
 namespace SmartJewelry.API.Entities;
 
-public class Cart
+public partial class Cart
 {
     public int CartId { get; set; }
-    public int CustomerId { get; set; }
-    public string? Items { get; set; } // JSON
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-    // Navigation properties
+    public int CustomerId { get; set; }
+
+    public string? Items { get; set; }
+
+    public DateTime? CreatedAt { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
+
     public virtual Customer Customer { get; set; } = null!;
 }

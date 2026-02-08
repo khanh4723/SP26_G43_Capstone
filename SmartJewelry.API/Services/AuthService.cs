@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using SmartJewelry.API.Data;
 using SmartJewelry.API.DTOs.Auth;
 using SmartJewelry.API.Entities;
+using SmartJewelry.API.Enums;
 using SmartJewelry.API.Services.Interfaces;
 using SmartJewelry.API.Settings;
 
@@ -12,7 +13,7 @@ namespace SmartJewelry.API.Services;
 
 public class AuthService : IAuthService
 {
-    private readonly SmartJewelryDbContext _context;
+    private readonly AiJgsmsFinalContext _context;
     private readonly ITokenService _tokenService;
     private readonly IEmailService _emailService;
     private readonly IEmailValidationService _emailValidationService;
@@ -21,7 +22,7 @@ public class AuthService : IAuthService
     private readonly IHttpClientFactory _httpClientFactory;
 
     public AuthService(
-        SmartJewelryDbContext context,
+        AiJgsmsFinalContext context,
         ITokenService tokenService,
         IEmailService emailService,
         IEmailValidationService emailValidationService,
@@ -169,8 +170,8 @@ public class AuthService : IAuthService
                     Username = user.Username,
                     Email = user.Email,
                     Role = user.Role,
-                    IsActive = user.IsActive,
-                    CreatedAt = user.CreatedAt
+                    IsActive = user.IsActive ?? true,
+                    CreatedAt = user.CreatedAt ?? DateTime.UtcNow
                 }
             };
         }
@@ -202,7 +203,7 @@ public class AuthService : IAuthService
             }
 
             // Kiểm tra tài khoản có active không
-            if (!user.IsActive)
+            if (!(user.IsActive ?? true))
             {
                 return new AuthResponseDto
                 {
@@ -279,8 +280,8 @@ public class AuthService : IAuthService
                     Username = user.Username,
                     Email = user.Email,
                     Role = user.Role,
-                    IsActive = user.IsActive,
-                    CreatedAt = user.CreatedAt
+                    IsActive = user.IsActive ?? true,
+                    CreatedAt = user.CreatedAt ?? DateTime.UtcNow
                 }
             };
         }
@@ -457,8 +458,8 @@ public class AuthService : IAuthService
                     Username = user.Username,
                     Email = user.Email,
                     Role = user.Role,
-                    IsActive = user.IsActive,
-                    CreatedAt = user.CreatedAt
+                    IsActive = user.IsActive ?? true,
+                    CreatedAt = user.CreatedAt ?? DateTime.UtcNow
                 }
             };
         }
@@ -689,8 +690,8 @@ public class AuthService : IAuthService
                     Username = user.Username,
                     Email = user.Email,
                     Role = user.Role,
-                    IsActive = user.IsActive,
-                    CreatedAt = user.CreatedAt
+                    IsActive = user.IsActive ?? true,
+                    CreatedAt = user.CreatedAt ?? DateTime.UtcNow
                 }
             };
         }
@@ -866,7 +867,7 @@ public class AuthService : IAuthService
             var user = token.User;
 
             // Kiểm tra user còn active không
-            if (!user.IsActive)
+            if (!(user.IsActive ?? true))
             {
                 return new AuthResponseDto { Success = false, Message = "Tài khoản đã bị khóa" };
             }
@@ -915,8 +916,8 @@ public class AuthService : IAuthService
                     Username = user.Username,
                     Email = user.Email,
                     Role = user.Role,
-                    IsActive = user.IsActive,
-                    CreatedAt = user.CreatedAt
+                    IsActive = user.IsActive ?? true,
+                    CreatedAt = user.CreatedAt ?? DateTime.UtcNow
                 }
             };
         }

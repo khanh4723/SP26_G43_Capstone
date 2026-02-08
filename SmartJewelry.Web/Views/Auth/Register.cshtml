@@ -1,6 +1,6 @@
-ï»¿@model RegisterViewModel
+@model RegisterViewModel
 @{
-    ViewData["Title"] = "ÄÄƒng kÃ½";
+    ViewData["Title"] = "Ğang kı";
     Layout = null;
 }
 
@@ -21,7 +21,7 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #fafaf9;
             min-height: 100vh;
             display: flex;
@@ -258,33 +258,33 @@
             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            Quay vá» trang chá»§
+            Quay v? trang ch?
         </a>
         
         <div class="auth-header">
             <div class="logo">
                 <img src="~/images/image-Photoroom (1).png" />
             </div>
-            <h1 class="auth-title">Táº¡o tÃ i khoáº£n</h1>
-            <p class="auth-subtitle">Trá»Ÿ thÃ nh thÃ nh viÃªn Smart Jewelry</p>
+            <h1 class="auth-title">T?o tài kho?n</h1>
+            <p class="auth-subtitle">Tr? thành thành viên Smart Jewelry</p>
         </div>
         @if (TempData["ErrorMessage"] != null) { <div class="alert alert-danger">@TempData["ErrorMessage"]</div> }
         <form asp-action="Register" method="post">
-            <div class="form-group"><label asp-for="FullName" class="form-label">Há» vÃ  tÃªn</label><input asp-for="FullName" class="form-control" placeholder="Nháº­p há» vÃ  tÃªn" /><span asp-validation-for="FullName" class="text-danger"></span></div>
+            <div class="form-group"><label asp-for="FullName" class="form-label">H? và tên</label><input asp-for="FullName" class="form-control" placeholder="Nh?p h? và tên" /><span asp-validation-for="FullName" class="text-danger"></span></div>
             <div class="form-group"><label asp-for="Email" class="form-label">Email</label><input asp-for="Email" class="form-control" placeholder="email@example.com" /><span asp-validation-for="Email" class="text-danger"></span></div>
             <div class="form-row">
-                <div class="form-group"><label asp-for="Password" class="form-label">Máº­t kháº©u</label><input asp-for="Password" type="password" class="form-control" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" /><span asp-validation-for="Password" class="text-danger"></span></div>
-                <div class="form-group"><label asp-for="ConfirmPassword" class="form-label">XÃ¡c nháº­n</label><input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" /><span asp-validation-for="ConfirmPassword" class="text-danger"></span></div>
+                <div class="form-group"><label asp-for="Password" class="form-label">M?t kh?u</label><input asp-for="Password" type="password" class="form-control" placeholder="••••••••" /><span asp-validation-for="Password" class="text-danger"></span></div>
+                <div class="form-group"><label asp-for="ConfirmPassword" class="form-label">Xác nh?n</label><input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="••••••••" /><span asp-validation-for="ConfirmPassword" class="text-danger"></span></div>
             </div>
-            <button type="submit" class="btn btn-primary">ÄÄƒng kÃ½</button>
+            <button type="submit" class="btn btn-primary">Ğang kı</button>
         </form>
-        <div class="divider">Hoáº·c Ä‘Äƒng kÃ½ vá»›i</div>
+        <div class="divider">Ho?c dang kı v?i</div>
         <form asp-controller="ExternalAuth" asp-action="Login" method="get">
             <input type="hidden" name="provider" value="Google" />
             <input type="hidden" name="returnUrl" value="/" />
             <button type="submit" class="btn btn-social">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-                ÄÄƒng kÃ½ vá»›i Google
+                Ğang kı v?i Google
             </button>
         </form>
 
@@ -295,10 +295,10 @@
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#1877F2"/>
                 </svg>
-                ÄÄƒng kÃ½ vá»›i Facebook
+                Ğang kı v?i Facebook
             </button>
         </form>
-        <div class="auth-footer"><p>ÄÃ£ cÃ³ tÃ i khoáº£n? <a asp-action="Login">ÄÄƒng nháº­p ngay</a></p></div>
+        <div class="auth-footer"><p>Ğã có tài kho?n? <a asp-action="Login">Ğang nh?p ngay</a></p></div>
     </div>
     <script src="~/js/jquery-1.11.0.min.js"></script>
     <script src="~/js/bootstrap.bundle.min.js"></script>

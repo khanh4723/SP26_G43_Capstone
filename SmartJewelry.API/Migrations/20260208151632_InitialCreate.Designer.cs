@@ -11,7 +11,7 @@ using SmartJewelry.API.Data;
 
 namespace SmartJewelry.API.Migrations
 {
-    [DbContext(typeof(SmartJewelryDbContext))]
+    [DbContext(typeof(AiJgsmsFinalContext))]
     [Migration("20260208151632_InitialCreate")]
     partial class InitialCreate
     {

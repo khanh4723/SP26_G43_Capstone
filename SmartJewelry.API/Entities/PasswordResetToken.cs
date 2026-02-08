@@ -1,17 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+
 namespace SmartJewelry.API.Entities;
 
-public class PasswordResetToken
+public partial class PasswordResetToken
 {
     public int TokenId { get; set; }
+
     public int UserId { get; set; }
-    public string Token { get; set; } = string.Empty;
+
+    public string Token { get; set; } = null!;
+
     public DateTime ExpiresAt { get; set; }
-    public bool IsUsed { get; set; } = false;
+
+    public bool IsUsed { get; set; }
+
     public DateTime? UsedAt { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public DateTime CreatedAt { get; set; }
+
     public string? IpAddress { get; set; }
+
     public string? UserAgent { get; set; }
 
-    // Navigation properties
     public virtual User User { get; set; } = null!;
 }

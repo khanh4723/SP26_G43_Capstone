@@ -9,10 +9,10 @@ namespace SmartJewelry.API.Services;
 
 public class ProfileService : IProfileService
 {
-    private readonly SmartJewelryDbContext _context;
+    private readonly AiJgsmsFinalContext _context;
     private readonly ILogger<ProfileService> _logger;
 
-    public ProfileService(SmartJewelryDbContext context, ILogger<ProfileService> logger)
+    public ProfileService(AiJgsmsFinalContext context, ILogger<ProfileService> logger)
     {
         _context = context;
         _logger = logger;
@@ -37,16 +37,16 @@ public class ProfileService : IProfileService
                 Email = user.Email,
                 EmailVerified = user.EmailVerified,
                 Role = user.Role,
-                CreatedAt = user.CreatedAt,
+                CreatedAt = user.CreatedAt ?? DateTime.UtcNow,
                 LastLogin = user.LastLogin
             };
 
             if (user.Customer != null)
             {
                 profileDto.CustomerId = user.Customer.CustomerId;
-                profileDto.LoyaltyPoints = user.Customer.LoyaltyPoints;
+                profileDto.LoyaltyPoints = user.Customer.LoyaltyPoints ?? 0;
                 profileDto.Phone = user.Customer.Phone;
-                profileDto.DateOfBirth = user.Customer.DateOfBirth;
+                profileDto.DateOfBirth = user.Customer.DateOfBirth.HasValue ? user.Customer.DateOfBirth.Value.ToDateTime(TimeOnly.MinValue) : null;
                 profileDto.Gender = user.Customer.Gender;
                 profileDto.CustomerTier = user.Customer.CustomerTier;
 
@@ -134,7 +134,7 @@ public class ProfileService : IProfileService
             if (user.Customer != null)
             {
                 user.Customer.Phone = updateProfileDto.Phone;
-                user.Customer.DateOfBirth = updateProfileDto.DateOfBirth;
+                user.Customer.DateOfBirth = updateProfileDto.DateOfBirth.HasValue ? DateOnly.FromDateTime(updateProfileDto.DateOfBirth.Value) : null;
                 user.Customer.Gender = updateProfileDto.Gender;
             }
 

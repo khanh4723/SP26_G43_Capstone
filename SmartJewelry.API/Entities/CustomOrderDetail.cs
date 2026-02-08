@@ -1,20 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+
 namespace SmartJewelry.API.Entities;
 
-public class CustomOrderDetail
+public partial class CustomOrderDetail
 {
     public int CustomDetailId { get; set; }
-    public int OrderId { get; set; }
-    public int? ConsultationTicketId { get; set; }
-    public int? SelectedGemstoneId { get; set; }
-    public int? SelectedMountingId { get; set; }
-    public string? Modifications { get; set; } // JSON
-    public string? WorkflowStages { get; set; } // JSON
-    public DateTime? EstimatedCompletionDate { get; set; }
-    public DateTime? ActualCompletionDate { get; set; }
 
-    // Navigation properties
+    public int OrderId { get; set; }
+
+    public int? ConsultationTicketId { get; set; }
+
+    public int? SelectedGemstoneId { get; set; }
+
+    public int? SelectedMountingId { get; set; }
+
+    public string? Modifications { get; set; }
+
+    public string? WorkflowStages { get; set; }
+
+    public DateOnly? EstimatedCompletionDate { get; set; }
+
+    public DateOnly? ActualCompletionDate { get; set; }
+
     public virtual Order Order { get; set; } = null!;
-    public virtual ConsultationTicket? ConsultationTicket { get; set; }
+
     public virtual Gemstone? SelectedGemstone { get; set; }
+
     public virtual Product? SelectedMounting { get; set; }
 }

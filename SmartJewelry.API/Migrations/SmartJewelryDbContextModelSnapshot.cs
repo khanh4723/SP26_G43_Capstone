@@ -10,7 +10,7 @@ using SmartJewelry.API.Data;
 
 namespace SmartJewelry.API.Migrations
 {
-    [DbContext(typeof(SmartJewelryDbContext))]
+    [DbContext(typeof(AiJgsmsFinalContext))]
     partial class SmartJewelryDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

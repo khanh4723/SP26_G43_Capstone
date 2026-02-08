@@ -105,11 +105,11 @@
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-4 text-muted">Ngày đăng ký:</div>
-                            <div class="col-md-8">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+                            <div class="col-md-8">@Model.CreatedAt.AddHours(7).ToString("dd/MM/yyyy HH:mm")</div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-4 text-muted">Đăng nhập lần cuối:</div>
-                            <div class="col-md-8">@(Model.LastLogin?.ToString("dd/MM/yyyy HH:mm") ?? "Chưa có")</div>
+                            <div class="col-md-8">@(Model.LastLogin?.AddHours(7).ToString("dd/MM/yyyy HH:mm") ?? "Chưa có")</div>
                         </div>
                     </div>
                 </div>

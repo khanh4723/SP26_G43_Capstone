@@ -23,7 +23,7 @@ builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Emai
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
 // Configure Database
-builder.Services.AddDbContext<SmartJewelryDbContext>(options =>
+builder.Services.AddDbContext<AiJgsmsFinalContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Configure JWT Authentication
