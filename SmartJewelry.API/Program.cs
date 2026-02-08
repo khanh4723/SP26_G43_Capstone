@@ -69,6 +69,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IEmailValidationService, EmailValidationService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 
 // Register HttpClient for Social Login
 builder.Services.AddHttpClient();

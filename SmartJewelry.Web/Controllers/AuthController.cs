@@ -82,21 +82,61 @@ public class AuthController : Controller
 
             if (response.IsSuccessStatusCode && result?.Success == true && result.Data?.User != null)
             {
+                // Log token information for debugging
+                var hasToken = result.Data.Token != null && !string.IsNullOrEmpty(result.Data.Token.AccessToken);
+                _logger.LogInformation("Login response - Has Token: {HasToken}", hasToken);
+                
+                if (hasToken)
+                {
+                    _logger.LogInformation("Login response - Token (first 20 chars): {Token}", 
+                        result.Data.Token!.AccessToken.Substring(0, Math.Min(20, result.Data.Token.AccessToken.Length)));
+                }
+                else
+                {
+                    _logger.LogWarning("Login response - Token is NULL or EMPTY!");
+                }
+                
                 // Create claims for cookie authentication
+                var userId = result.Data.User.UserId;
+                var userName = !string.IsNullOrEmpty(result.Data.User.Username) ? result.Data.User.Username : result.Data.User.FullName;
+                
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.NameIdentifier, result.Data.User.UserID.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                     new Claim(ClaimTypes.Email, result.Data.User.Email),
-                    new Claim(ClaimTypes.Name, result.Data.User.FullName),
-                    new Claim("AccessToken", result.Data.Token?.AccessToken ?? ""),
-                    new Claim("RefreshToken", result.Data.Token?.RefreshToken ?? "")
+                    new Claim(ClaimTypes.Name, userName)
                 };
 
-                // Add roles
-                foreach (var role in result.Data.User.Roles)
+                // Only add token claims if they exist
+                if (result.Data.Token != null)
                 {
-                    claims.Add(new Claim(ClaimTypes.Role, role));
+                    if (!string.IsNullOrEmpty(result.Data.Token.AccessToken))
+                    {
+                        claims.Add(new Claim("AccessToken", result.Data.Token.AccessToken));
+                        _logger.LogInformation("Added AccessToken claim");
+                    }
+                    
+                    if (!string.IsNullOrEmpty(result.Data.Token.RefreshToken))
+                    {
+                        claims.Add(new Claim("RefreshToken", result.Data.Token.RefreshToken));
+                    }
                 }
+
+                // Add roles
+                if (result.Data.User.Roles != null && result.Data.User.Roles.Any())
+                {
+                    foreach (var role in result.Data.User.Roles)
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, role));
+                    }
+                }
+                else if (!string.IsNullOrEmpty(result.Data.User.Role))
+                {
+                    // Fallback to single Role property if Roles array is empty
+                    claims.Add(new Claim(ClaimTypes.Role, result.Data.User.Role));
+                }
+
+                _logger.LogInformation("Total claims created: {Count}", claims.Count);
 
                 var identity = new ClaimsIdentity(claims, "Cookies");
                 var principal = new ClaimsPrincipal(identity);
@@ -109,7 +149,7 @@ public class AuthController : Controller
 
                 await HttpContext.SignInAsync("Cookies", principal, authProperties);
 
-                _logger.LogInformation("User {Email} logged in successfully", model.Email);
+                _logger.LogInformation("User {Email} logged in successfully with {ClaimCount} claims", model.Email, claims.Count);
                 
                 return LocalRedirect(model.ReturnUrl ?? Url.Content("~/"));
             }
@@ -405,7 +445,7 @@ public class AuthController : Controller
     {
         await HttpContext.SignOutAsync("Cookies");
         _logger.LogInformation("User logged out");
-        return RedirectToAction("Index", "HomePage"); // Redirect to HomePage after logout
+        return RedirectToAction("Index", "Home"); // Redirect to HomePage after logout
     }
 
     // GET: /Auth/AccessDenied

@@ -117,32 +117,70 @@ public class ExternalAuthController : Controller
 
                 if (result?.Success == true && result.Data?.Token != null)
                 {
-                    // Store token in cookie
-                    Response.Cookies.Append("SmartJewelry.AuthToken", result.Data.Token.AccessToken, new CookieOptions
+                    // Log token information for debugging
+                    var hasToken = !string.IsNullOrEmpty(result.Data.Token.AccessToken);
+                    _logger.LogInformation("Social login response - Has Token: {HasToken}", hasToken);
+                    
+                    if (hasToken)
                     {
-                        HttpOnly = true,
-                        Secure = true,
-                        SameSite = SameSiteMode.Strict,
-                        Expires = result.Data.Token.ExpiresAt
-                    });
-
-                    // Create authentication cookie for the web app
-                    var claimsIdentity = new ClaimsIdentity(new[]
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, result.Data.User?.UserID.ToString() ?? ""),
-                        new Claim(ClaimTypes.Email, result.Data.User?.Email ?? ""),
-                        new Claim(ClaimTypes.Name, result.Data.User?.FullName ?? ""),
-                    }, "Cookies");
-
-                    foreach (var role in result.Data.User?.Roles ?? new List<string>())
-                    {
-                        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role));
+                        _logger.LogInformation("Social login - Token (first 20 chars): {Token}", 
+                            result.Data.Token.AccessToken.Substring(0, Math.Min(20, result.Data.Token.AccessToken.Length)));
                     }
 
-                    await HttpContext.SignInAsync("Cookies", new ClaimsPrincipal(claimsIdentity));
+                    // Create authentication cookie for the web app
+                    var userId = result.Data.User?.UserId;
+                    var userName = !string.IsNullOrEmpty(result.Data.User?.Username) ? result.Data.User?.Username : result.Data.User?.FullName;
+                    
+                    var userClaims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, userId?.ToString() ?? ""),
+                        new Claim(ClaimTypes.Email, result.Data.User?.Email ?? ""),
+                        new Claim(ClaimTypes.Name, userName ?? "")
+                    };
+
+                    // Add AccessToken to claims (IMPORTANT!)
+                    if (!string.IsNullOrEmpty(result.Data.Token.AccessToken))
+                    {
+                        userClaims.Add(new Claim("AccessToken", result.Data.Token.AccessToken));
+                        _logger.LogInformation("Added AccessToken claim for social login");
+                    }
+
+                    if (!string.IsNullOrEmpty(result.Data.Token.RefreshToken))
+                    {
+                        userClaims.Add(new Claim("RefreshToken", result.Data.Token.RefreshToken));
+                    }
+
+                    // Add roles
+                    if (result.Data.User?.Roles != null && result.Data.User.Roles.Any())
+                    {
+                        foreach (var role in result.Data.User.Roles)
+                        {
+                            userClaims.Add(new Claim(ClaimTypes.Role, role));
+                        }
+                    }
+                    else if (!string.IsNullOrEmpty(result.Data.User?.Role))
+                    {
+                        userClaims.Add(new Claim(ClaimTypes.Role, result.Data.User.Role));
+                    }
+
+                    _logger.LogInformation("Total claims created for social login: {Count}", userClaims.Count);
+
+                    var claimsIdentity = new ClaimsIdentity(userClaims, "Cookies");
+                    var principal = new ClaimsPrincipal(claimsIdentity);
+
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = true,
+                        ExpiresUtc = result.Data.Token.ExpiresAt
+                    };
+
+                    await HttpContext.SignInAsync("Cookies", principal, authProperties);
+
+                    _logger.LogInformation("User {Email} logged in via {Provider} with {ClaimCount} claims", 
+                        result.Data.User?.Email, provider, userClaims.Count);
 
                     // Get return URL - redirect to HomePage after social login
-                    var returnUrl = TempData["ReturnUrl"] as string ?? "/HomePage/Index";
+                    var returnUrl = TempData["ReturnUrl"] as string ?? Url.Content("~/");
                     return Redirect(returnUrl);
                 }
             }

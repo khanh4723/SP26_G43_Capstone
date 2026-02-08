@@ -211,16 +211,17 @@ public class AuthService : IAuthService
                 };
             }
 
-            // Kiểm tra email đã được verify chưa (yêu cầu verify trước khi login)
-            if (!user.EmailVerified && string.IsNullOrEmpty(user.SocialLoginProvider))
-            {
-                _logger.LogWarning("Login attempt with unverified email: {Email}", user.Email);
-                return new AuthResponseDto
-                {
-                    Success = false,
-                    Message = "Email chưa được xác thực. Vui lòng kiểm tra email và xác thực tài khoản trước khi đăng nhập."
-                };
-            }
+            // Kiểm tra email đã được verify chưa (TẠM THỜI TẮT để test)
+            // REMOVED: Email verification requirement
+            // if (!user.EmailVerified && string.IsNullOrEmpty(user.SocialLoginProvider))
+            // {
+            //     _logger.LogWarning("Login attempt with unverified email: {Email}", user.Email);
+            //     return new AuthResponseDto
+            //     {
+            //         Success = false,
+            //         Message = "Email chưa được xác thực. Vui lòng kiểm tra email và xác thực tài khoản trước khi đăng nhập."
+            //     };
+            // }
 
             // Kiểm tra password (cho phép null nếu đăng nhập qua social)
             if (string.IsNullOrEmpty(user.PasswordHash))

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace SmartJewelry.Web.Controllers;
 
-[Authorize] // Chỉ user đã login mới vào được
+// Guest có thể vào xem, chỉ khi mua hàng mới cần đăng nhập
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -13,7 +13,7 @@ public class HomeController : Controller
         _logger = logger;
     }
 
-    // GET: /Home/Index - Trang dành cho user đã đăng nhập
+    // GET: /Home/Index - Trang home cho tất cả mọi người
     public IActionResult Index()
     {
         return View();

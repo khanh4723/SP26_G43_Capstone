@@ -25,11 +25,14 @@ public class TokenInfo
 
 public class UserInfo
 {
-    public int UserID { get; set; }
+    public int UserId { get; set; }
     public string Email { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
     public string FullName { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; }
-    public bool EmailVerified { get; set; }
+    public string Role { get; set; } = string.Empty;
     public List<string> Roles { get; set; } = new();
+    public bool EmailVerified { get; set; }
+    public bool IsActive { get; set; }
     public DateTime CreatedAt { get; set; }
 }
