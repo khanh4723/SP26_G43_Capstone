@@ -38,9 +38,9 @@ CSS STRUCTURE:
   --swiper-theme-color: #704204 !important;
   --swiper-pagination-color: #704204 !important;
   
-  /* Typography - Consistent with site.css */
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Typography - Luxury fonts for jewelry */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
   
   /* Transitions */
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
