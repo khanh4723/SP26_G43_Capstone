@@ -23,7 +23,6 @@ CSS STRUCTURE:
 /** 1. VARIABLES
 --------------------------------------------------------------*/
 :root {
-  /* Brand Colors - Luxury Jewelry Theme */
   --accent-color: #0d0d0d;
   --bs-gray-100: #f3f3f3;
   --bs-gray-200: #e7e5e2;
@@ -37,14 +36,6 @@ CSS STRUCTURE:
   --navbar-color-color: #131814;
   --swiper-theme-color: #704204 !important;
   --swiper-pagination-color: #704204 !important;
-  
-  /* Typography - Consistent with site.css */
-  --font-display: 'Playfair Display', Georgia, serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  
-  /* Transitions */
-  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* on mobile devices below 600px
@@ -56,10 +47,10 @@ CSS STRUCTURE:
   }
 }
 
-/* Fonts - using variables from above */
+/* Fonts */
 :root {
-  --body-font: var(--font-body);
-  --heading-font: var(--font-display);
+  --body-font: "Sofia Sans", sans-serif;
+  --heading-font: "Cormorant Upright", serif;
 }
 
 /*----------------------------------------------*/
@@ -84,7 +75,8 @@ body {
   font-family: var(--body-font);
   font-size: 16px;
   font-weight: 300;
-  line-height: 1.6;  
+  line-height: 1.6;
+  color: var(--accent-color);
   margin: 0;
 }
 
@@ -722,10 +714,7 @@ h5 {
 .dropdown-item:hover {
   background-color: var(--bs-secondary);
 }
-.logo{
-    height:110px;
-    width:120px;
-}
+
 /*------------ Offcanvas -------------- */
 #header-nav .navbar-toggler:focus {
   box-shadow: none;

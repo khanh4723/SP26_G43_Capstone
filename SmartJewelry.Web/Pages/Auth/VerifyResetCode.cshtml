@@ -1,0 +1,135 @@
+@page
+@model SmartJewelry.Web.Pages.Auth.VerifyResetCodeModel
+@{
+    ViewData["Title"] = "Xác thực mã";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Smart Jewelry</title>
+    <link rel="stylesheet" href="~/css/auth.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<div class="auth-wrapper">
+    <!-- Left Panel - Branding -->
+    <div class="auth-branding">
+        <div class="branding-content">
+            <div class="brand-logo">
+                <i class="fas fa-gem"></i>
+            </div>
+            <h1 class="brand-name">Smart Jewelry</h1>
+            <p class="brand-tagline">Trang sức & Đá quý cao cấp</p>
+            
+            <ul class="brand-features">
+                <li>
+                    <i class="fas fa-envelope-open-text"></i>
+                    <span>Kiểm tra email của bạn</span>
+                </li>
+                <li>
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Mã xác thực 6 ký tự</span>
+                </li>
+                <li>
+                    <i class="fas fa-clock"></i>
+                    <span>Mã có hiệu lực 30 phút</span>
+                </li>
+                <li>
+                    <i class="fas fa-lock"></i>
+                    <span>Bảo mật và an toàn</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Right Panel - Form -->
+    <div class="auth-form-panel">
+        <div class="auth-form-container">
+            <a href="/Auth/ForgotPassword" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Quay lại
+            </a>
+
+            <div class="auth-header">
+                <h1>🔐 Xác thực mã</h1>
+                <p>Nhập mã 6 ký tự đã được gửi đến email của bạn</p>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Email))
+            {
+                <div class="alert alert-info">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <p><strong>Email:</strong> @Model.Email</p>
+                        <p style="margin-top: 8px; opacity: 0.8;">Kiểm tra hộp thư đến hoặc thư mục Spam</p>
+                    </div>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>@Model.ErrorMessage</span>
+                </div>
+            }
+
+            <form method="post" class="auth-form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="Email" />
+                
+                <div class="form-group">
+                    <label asp-for="Input.Code">Mã xác thực <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-key"></i>
+                        <input type="text" 
+                               asp-for="Input.Code"
+                               placeholder="Nhập mã 6 ký tự"
+                               maxlength="6"
+                               style="text-align: center; font-size: 24px; letter-spacing: 5px; font-weight: bold; text-transform: uppercase;"
+                               autocomplete="off"
+                               autofocus />
+                    </div>
+                    <span asp-validation-for="Input.Code" class="field-validation-error"></span>
+                    <small style="display: block; margin-top: 8px; color: #666; text-align: center;">
+                        Ví dụ: A3B7K9
+                    </small>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">
+                    <i class="fas fa-check-circle"></i>
+                    Xác thực mã
+                </button>
+            </form>
+
+            <div class="auth-footer" style="text-align: center; margin-top: 20px;">
+                <p>Không nhận được mã? 
+                    <form method="post" asp-page-handler="ResendCode" style="display: inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Email" />
+                        <button type="submit" style="background: none; border: none; color: #667eea; text-decoration: underline; cursor: pointer; padding: 0; font-size: inherit;">
+                            Gửi lại
+                        </button>
+                    </form>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
+<script>
+    // Auto-format code input to uppercase
+    document.querySelector('input[name="Input.Code"]').addEventListener('input', function(e) {
+        e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    });
+</script>
+</body>
+</html>

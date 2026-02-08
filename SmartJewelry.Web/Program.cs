@@ -1,7 +1,7 @@
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
 // Configure HttpClient for API calls
 builder.Services.AddHttpClient("SmartJewelryAPI", client =>
@@ -23,7 +23,6 @@ var authBuilder = builder.Services.AddAuthentication(options =>
     options.LoginPath = "/Auth/Login";
     options.LogoutPath = "/Auth/Logout";
     options.AccessDeniedPath = "/Auth/AccessDenied";
-    options.Cookie.Name = "SmartJewelry.Auth";
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
     options.SlidingExpiration = true;
 });
@@ -80,8 +79,6 @@ app.UseAuthorization();
 
 app.UseSession();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=HomePage}/{action=Index}/{id?}");
+app.MapRazorPages();
 
 app.Run();
