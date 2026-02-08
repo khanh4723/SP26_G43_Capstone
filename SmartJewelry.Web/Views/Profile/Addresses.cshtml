@@ -1,0 +1,490 @@
+@model List<SmartJewelry.Web.ViewModels.Profile.AddressViewModel>
+@{
+    ViewData["Title"] = "Địa chỉ của tôi";
+}
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <nav class="nav flex-column">
+                            <a class="nav-link" href="@Url.Action("Index", "Profile")">
+                                <i class="bi bi-person"></i> Thông tin cá nhân
+                            </a>
+                            <a class="nav-link active" href="@Url.Action("Addresses", "Profile")">
+                                <i class="bi bi-geo-alt"></i> Địa chỉ của tôi
+                            </a>
+                            <a class="nav-link" href="@Url.Action("ChangePassword", "Profile")">
+                                <i class="bi bi-lock"></i> Đổi mật khẩu
+                            </a>
+                            <hr>
+                            <a class="nav-link text-danger" href="@Url.Action("Logout", "Auth")">
+                                <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Địa chỉ của tôi</h5>
+                            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal">
+                                <i class="bi bi-plus-lg"></i> Thêm địa chỉ mới
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        @if (Model == null || !Model.Any())
+                        {
+                            <div class="text-center py-5">
+                                <i class="bi bi-geo-alt" style="font-size: 3rem; color: #ccc;"></i>
+                                <p class="text-muted mt-3">Bạn chưa có địa chỉ nào</p>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAddressModal">
+                                    Thêm địa chỉ mới
+                                </button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="row">
+                                @foreach (var address in Model)
+                                {
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card @(address.IsDefault ? "border-primary" : "")">
+                                            <div class="card-body">
+                                                @if (address.IsDefault)
+                                                {
+                                                    <span class="badge bg-primary mb-2">Mặc định</span>
+                                                }
+                                                <h6 class="card-title">@address.RecipientName</h6>
+                                                <p class="card-text small mb-1">
+                                                    <i class="bi bi-telephone"></i> @address.Phone
+                                                </p>
+                                                <p class="card-text small text-muted">
+                                                    <i class="bi bi-geo-alt"></i> 
+                                                    @address.AddressLine
+                                                    @if (!string.IsNullOrEmpty(address.Ward))
+                                                    {
+                                                        <text>, @address.Ward</text>
+                                                    }
+                                                    , @address.District, @address.City
+                                                </p>
+                                                <div class="d-flex gap-2 mt-3">
+                                                    <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                            onclick="editAddress('@address.Id', '@address.RecipientName', '@address.Phone', '@address.AddressLine', '@address.Ward', '@address.District', '@address.City', @(address.IsDefault ? "true" : "false"))">
+                                                        <i class="bi bi-pencil"></i> Sửa
+                                                    </button>
+                                                    @if (!address.IsDefault)
+                                                    {
+                                                        <button type="button" class="btn btn-sm btn-outline-success" 
+                                                                onclick="setDefaultAddress('@address.Id')">
+                                                            <i class="bi bi-check-lg"></i> Đặt mặc định
+                                                        </button>
+                                                    }
+                                                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                            onclick="deleteAddress('@address.Id')">
+                                                        <i class="bi bi-trash"></i> Xóa
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Add Address Modal -->
+<div class="modal fade" id="addAddressModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Thêm địa chỉ mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="addAddressForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Tên người nhận <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="add_recipientName" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                        <input type="tel" class="form-control" id="add_phone" placeholder="Ví dụ: 0912345678" required />
+                        <small class="text-muted">Nhập số điện thoại Việt Nam (10-11 số)</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tỉnh/Thành phố <span class="text-danger">*</span></label>
+                        <select class="form-select" id="add_city_select" required>
+                            <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                        </select>
+                        <input type="hidden" id="add_city" />
+                        <input type="hidden" id="add_cityCode" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Quận/Huyện <span class="text-danger">*</span></label>
+                        <select class="form-select" id="add_district_select" disabled required>
+                            <option value="">-- Chọn Quận/Huyện --</option>
+                        </select>
+                        <input type="hidden" id="add_district" />
+                        <input type="hidden" id="add_districtCode" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phường/Xã</label>
+                        <select class="form-select" id="add_ward_select" disabled>
+                            <option value="">-- Chọn Phường/Xã --</option>
+                        </select>
+                        <input type="hidden" id="add_ward" />
+                        <input type="hidden" id="add_wardCode" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Địa chỉ chi tiết <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="add_addressLine" placeholder="Số nhà, tên đường..." required />
+                        <small class="text-muted">Ví dụ: 123 Lê Lợi, Ngõ 5</small>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="add_isDefault" />
+                        <label class="form-check-label" for="add_isDefault">Đặt làm địa chỉ mặc định</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Thêm địa chỉ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Address Modal -->
+<div class="modal fade" id="editAddressModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chỉnh sửa địa chỉ</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editAddressForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="edit_addressId" />
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Tên người nhận <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="edit_recipientName" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                        <input type="tel" class="form-control" id="edit_phone" placeholder="Ví dụ: 0912345678" required />
+                        <small class="text-muted">Nhập số điện thoại Việt Nam (10-11 số)</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tỉnh/Thành phố <span class="text-danger">*</span></label>
+                        <select class="form-select" id="edit_city_select" required>
+                            <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                        </select>
+                        <input type="hidden" id="edit_city" />
+                        <input type="hidden" id="edit_cityCode" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Quận/Huyện <span class="text-danger">*</span></label>
+                        <select class="form-select" id="edit_district_select" disabled required>
+                            <option value="">-- Chọn Quận/Huyện --</option>
+                        </select>
+                        <input type="hidden" id="edit_district" />
+                        <input type="hidden" id="edit_districtCode" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phường/Xã</label>
+                        <select class="form-select" id="edit_ward_select" disabled>
+                            <option value="">-- Chọn Phường/Xã --</option>
+                        </select>
+                        <input type="hidden" id="edit_ward" />
+                        <input type="hidden" id="edit_wardCode" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Địa chỉ chi tiết <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="edit_addressLine" placeholder="Số nhà, tên đường..." required />
+                        <small class="text-muted">Ví dụ: 123 Lê Lợi, Ngõ 5</small>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="edit_isDefault" />
+                        <label class="form-check-label" for="edit_isDefault">Đặt làm địa chỉ mặc định</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="~/js/vietnam-address.js"></script>
+    <script>
+        // Initialize Vietnam Address for Add Form
+        VietnamAddress.initForm({
+            provinceSelectId: 'add_city_select',
+            districtSelectId: 'add_district_select',
+            wardSelectId: 'add_ward_select',
+            provinceNameInputId: 'add_city',
+            districtNameInputId: 'add_district',
+            wardNameInputId: 'add_ward'
+        });
+
+        // Store codes when selections change
+        $('#add_city_select').on('change', function() {
+            $('#add_cityCode').val($(this).val());
+        });
+        $('#add_district_select').on('change', function() {
+            $('#add_districtCode').val($(this).val());
+        });
+        $('#add_ward_select').on('change', function() {
+            $('#add_wardCode').val($(this).val());
+        });
+
+        // Initialize Vietnam Address for Edit Form
+        VietnamAddress.initForm({
+            provinceSelectId: 'edit_city_select',
+            districtSelectId: 'edit_district_select',
+            wardSelectId: 'edit_ward_select',
+            provinceNameInputId: 'edit_city',
+            districtNameInputId: 'edit_district',
+            wardNameInputId: 'edit_ward'
+        });
+
+        // Store codes when selections change (Edit form)
+        $('#edit_city_select').on('change', function() {
+            $('#edit_cityCode').val($(this).val());
+        });
+        $('#edit_district_select').on('change', function() {
+            $('#edit_districtCode').val($(this).val());
+        });
+        $('#edit_ward_select').on('change', function() {
+            $('#edit_wardCode').val($(this).val());
+        });
+
+        // Add Address
+        $('#addAddressForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            // Get all field values from VISIBLE select dropdowns and inputs
+            const recipientName = $('#add_recipientName').val();
+            const phone = $('#add_phone').val();
+            const addressLine = $('#add_addressLine').val();
+            
+            // Get values from select dropdowns, not hidden inputs
+            const citySelect = $('#add_city_select');
+            const districtSelect = $('#add_district_select');
+            const wardSelect = $('#add_ward_select');
+            
+            // Get the selected text (name) from dropdowns
+            const cityCode = citySelect.val();
+            const cityName = citySelect.find('option:selected').text();
+            const districtCode = districtSelect.val();
+            const districtName = districtSelect.find('option:selected').text();
+            const wardCode = wardSelect.val();
+            const wardName = wardSelect.find('option:selected').text();
+            
+            console.log('Form values before validation:', {
+                recipientName,
+                phone,
+                addressLine,
+                cityCode,
+                cityName,
+                districtCode,
+                districtName,
+                wardCode,
+                wardName
+            });
+            
+            // Validate required fields
+            if (!recipientName || recipientName.trim() === '') {
+                alert('Vui lòng nhập tên người nhận');
+                return false;
+            }
+            
+            if (!phone || phone.trim() === '') {
+                alert('Vui lòng nhập số điện thoại');
+                return false;
+            }
+            
+            if (!cityCode || cityCode.trim() === '') {
+                alert('Vui lòng chọn Tỉnh/Thành phố');
+                return false;
+            }
+            
+            if (!districtCode || districtCode.trim() === '') {
+                alert('Vui lòng chọn Quận/Huyện');
+                return false;
+            }
+            
+            if (!addressLine || addressLine.trim() === '') {
+                alert('Vui lòng nhập địa chỉ chi tiết');
+                return false;
+            }
+            
+            const data = {
+                RecipientName: recipientName,
+                Phone: phone,
+                AddressLine: addressLine,
+                Ward: wardName && wardName !== '-- Chọn Phường/Xã --' ? wardName : null,
+                WardCode: wardCode || null,
+                District: districtName,
+                DistrictCode: districtCode,
+                City: cityName,
+                CityCode: cityCode,
+                IsDefault: $('#add_isDefault').is(':checked')
+            };
+
+            console.log('Submitting data:', data);
+
+            $.ajax({
+                url: '@Url.Action("AddAddress", "Profile")',
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('RequestVerificationToken', $('input[name="__RequestVerificationToken"]').val());
+                },
+                success: function(response) {
+                    console.log('Success response:', response);
+                    if (response.success) {
+                        alert('Thêm địa chỉ thành công!');
+                        location.reload();
+                    } else {
+                        alert('Lỗi: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', {xhr, status, error});
+                    console.error('Response Text:', xhr.responseText);
+                    alert('Có lỗi xảy ra khi thêm địa chỉ. Xem console để biết chi tiết.');
+                }
+            });
+        });
+
+        // Edit Address
+        function editAddress(id, name, phone, addressLine, ward, district, city, isDefault) {
+            $('#edit_addressId').val(id);
+            $('#edit_recipientName').val(name);
+            $('#edit_phone').val(phone);
+            $('#edit_addressLine').val(addressLine);
+            $('#edit_ward').val(ward);
+            $('#edit_district').val(district);
+            $('#edit_city').val(city);
+            $('#edit_isDefault').prop('checked', isDefault);
+            $('#editAddressModal').modal('show');
+        }
+
+        $('#editAddressForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            const addressId = $('#edit_addressId').val();
+            
+            // Get values from select dropdowns
+            const citySelect = $('#edit_city_select');
+            const districtSelect = $('#edit_district_select');
+            const wardSelect = $('#edit_ward_select');
+            
+            const cityCode = citySelect.val();
+            const cityName = citySelect.find('option:selected').text();
+            const districtCode = districtSelect.val();
+            const districtName = districtSelect.find('option:selected').text();
+            const wardCode = wardSelect.val();
+            const wardName = wardSelect.find('option:selected').text();
+            
+            const data = {
+                RecipientName: $('#edit_recipientName').val(),
+                Phone: $('#edit_phone').val(),
+                AddressLine: $('#edit_addressLine').val(),
+                Ward: wardName && wardName !== '-- Chọn Phường/Xã --' ? wardName : null,
+                WardCode: wardCode || null,
+                District: districtName,
+                DistrictCode: districtCode,
+                City: cityName,
+                CityCode: cityCode,
+                IsDefault: $('#edit_isDefault').is(':checked')
+            };
+
+            $.ajax({
+                url: '@Url.Action("UpdateAddress", "Profile")' + '?addressId=' + addressId,
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('RequestVerificationToken', $('input[name="__RequestVerificationToken"]').val());
+                },
+                success: function(response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('Có lỗi xảy ra');
+                }
+            });
+        });
+
+        // Delete Address
+        function deleteAddress(id) {
+            if (confirm('Bạn có chắc muốn xóa địa chỉ này?')) {
+                $.ajax({
+                    url: '@Url.Action("DeleteAddress", "Profile")' + '?addressId=' + id,
+                    type: 'POST',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Có lỗi xảy ra');
+                    }
+                });
+            }
+        }
+
+        // Set Default Address
+        function setDefaultAddress(id) {
+            $.ajax({
+                url: '@Url.Action("SetDefaultAddress", "Profile")' + '?addressId=' + id,
+                type: 'POST',
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('Có lỗi xảy ra');
+                }
+            });
+        }
+    </script>
+}
