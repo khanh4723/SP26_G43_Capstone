@@ -74,6 +74,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IEmailValidationService, EmailValidationService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 // Register HttpClient for Social Login
 builder.Services.AddHttpClient();
@@ -175,5 +176,26 @@ app.MapControllers();
 
 // Health check endpoint
 app.MapGet("/health", () => Results.Ok(new { Status = "Healthy", Timestamp = DateTime.UtcNow }));
+
+// Seed demo data for local testing (idempotent)
+// Enable by:
+// - default in Development, or
+// - set appsettings.json: "SeedData": true
+try
+{
+    var shouldSeed = app.Environment.IsDevelopment() || app.Configuration.GetValue<bool>("SeedData");
+    if (shouldSeed)
+    {
+        using var scope = app.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AiJgsmsFinalContext>();
+        var logger = scope.ServiceProvider.GetService<ILoggerFactory>()?.CreateLogger("DataSeeder");
+        await DataSeeder.SeedAsync(db, logger);
+    }
+}
+catch (Exception ex)
+{
+    // Don't block startup if seeding fails
+    app.Logger.LogWarning(ex, "Data seeding failed");
+}
 
 app.Run();

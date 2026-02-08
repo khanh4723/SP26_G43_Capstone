@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SmartJewelry.API.Entities;
 
@@ -23,6 +24,8 @@ public partial class Category
 
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 
-    // Alias for InverseParentCategory (used in DbContext)
-    public virtual ICollection<Category> SubCategories => InverseParentCategory;
+    // Convenience alias for UI code.
+    // IMPORTANT: mark NotMapped so EF won't treat it as a navigation and create a shadow FK (CategoryId1).
+    [NotMapped]
+    public ICollection<Category> SubCategories => InverseParentCategory;
 }

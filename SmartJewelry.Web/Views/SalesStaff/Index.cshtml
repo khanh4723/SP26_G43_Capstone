@@ -1,0 +1,35 @@
+@{
+    Layout = "_StaffLayout";
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="staff-card">
+            <div class="staff-card__header">
+                <div class="fw-semibold"><i class="bi bi-receipt me-2"></i>Orders</div>
+            </div>
+            <div class="staff-card__body">
+                <p class="text-muted mb-3">Xem danh sách đơn hàng bạn đang phụ trách.</p>
+                <a class="btn btn-dark" asp-controller="SalesStaff" asp-action="Orders">
+                    Mở danh sách Orders
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="staff-card">
+            <div class="staff-card__header">
+                <div class="fw-semibold"><i class="bi bi-lightning-charge me-2"></i>Quick actions</div>
+            </div>
+            <div class="staff-card__body">
+                <div class="d-flex flex-wrap gap-2">
+                    <a class="btn btn-outline-secondary" asp-controller="SalesStaff" asp-action="Orders"><i class="bi bi-search me-1"></i>Tìm đơn</a>
+                    <a class="btn btn-outline-secondary" href="#"><i class="bi bi-chat-dots me-1"></i>Chat khách</a>
+                    <a class="btn btn-outline-secondary" href="#"><i class="bi bi-clipboard-check me-1"></i>Xử lý đơn</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

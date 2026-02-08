@@ -150,8 +150,19 @@ public class AuthController : Controller
                 await HttpContext.SignInAsync("Cookies", principal, authProperties);
 
                 _logger.LogInformation("User {Email} logged in successfully with {ClaimCount} claims", model.Email, claims.Count);
-                
-                return LocalRedirect(model.ReturnUrl ?? Url.Content("~/"));
+
+                // Default redirect theo role
+                var returnUrl = model.ReturnUrl ?? Url.Content("~/");
+                var isDefaultReturn = string.IsNullOrEmpty(model.ReturnUrl)
+                                     || returnUrl == "/"
+                                     || returnUrl == Url.Content("~/");
+
+                if (isDefaultReturn && principal.IsInRole("sales_staff"))
+                {
+                    return RedirectToAction("Index", "SalesStaff");
+                }
+
+                return LocalRedirect(returnUrl);
             }
             else
             {

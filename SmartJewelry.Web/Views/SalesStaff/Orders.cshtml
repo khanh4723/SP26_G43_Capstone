@@ -1,0 +1,61 @@
+@model List<SmartJewelry.Web.ViewModels.Orders.OrderListItemViewModel>
+
+@{
+    Layout = "_StaffLayout";
+    ViewData["Title"] = "Orders";
+}
+
+<div class="staff-card">
+    <div class="staff-card__header">
+        <div class="fw-semibold"><i class="bi bi-receipt me-2"></i>Danh sách đơn hàng</div>
+        <div class="text-muted small">@Model?.Count đơn</div>
+    </div>
+    <div class="staff-card__body">
+        @if (Model == null || Model.Count == 0)
+        {
+            <div class="text-muted">Chưa có đơn hàng nào được gán cho bạn.</div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table staff-table align-middle">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Order No</th>
+                        <th>Customer</th>
+                        <th>Status</th>
+                        <th>Items</th>
+                        <th>Payment</th>
+                        <th class="text-end">Grand Total</th>
+                        <th>Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var o in Model)
+                    {
+                        <tr>
+                            <td>@o.OrderId</td>
+                            <td class="fw-semibold">@o.OrderNumber</td>
+                            <td>
+                                <div class="fw-semibold">@o.CustomerName</div>
+                                <div class="small text-muted">@o.CustomerEmail</div>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border">@(string.IsNullOrEmpty(o.OrderStatus) ? "N/A" : o.OrderStatus)</span>
+                            </td>
+                            <td>@o.ItemsCount</td>
+                            <td>
+                                <div class="small">@(o.LatestPaymentMethod ?? "-")</div>
+                                <div class="small text-muted">@(o.LatestPaymentStatus ?? "-")</div>
+                            </td>
+                            <td class="text-end fw-semibold">@o.GrandTotal.ToString("N0")</td>
+                            <td class="small text-muted">@(o.OrderDate?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
